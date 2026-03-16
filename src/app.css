@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body {
+  background-color: transparent !important;
+  margin: 0;
+  overflow: hidden;
+}
+
+/* Spotty Animations */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes sniff {
+  0%, 100% { transform: rotate(0deg) translateX(0); }
+  25% { transform: rotate(-10deg) translateX(-4px); }
+  75% { transform: rotate(10deg) translateX(4px); }
+}
+
+@keyframes sleep {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.anim-float { animation: float 3s ease-in-out infinite; }
+.anim-sniff { animation: sniff 0.8s ease-in-out infinite; }
+.anim-sleep { animation: sleep 2s ease-in-out infinite; }
