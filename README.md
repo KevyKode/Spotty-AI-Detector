@@ -34,3 +34,34 @@ To run Spotty locally on your machine, you will need **Node.js**, **Rust**, and 
 git clone https://github.com/KevyKode/Spotty-AI-Detector.git
 cd Spotty-AI-Detector
 npm install
+
+2. Add your API Key
+Spotty requires a free Google Gemini API key to function.
+
+Get a free key from Google AI Studio.
+Open src-tauri/src/main.rs.
+Locate Line 7 and replace the placeholder with your key:
+rust
+Run Code
+Copy code
+const API_TOKEN: &str = "YOUR_GEMINI_KEY_HERE"; 
+3. Run in Development Mode
+This will compile the Rust backend and launch the transparent frontend window.
+
+bash
+Copy code
+npx tauri dev
+4. Build the Standalone .exe
+To package Spotty into a distributable Windows installer:
+
+bash
+Copy code
+npm run build
+npx tauri build
+(Your optimized .exe will be generated in src-tauri/target/release/bundle/nsis/)
+
+🔒 Privacy First
+Spotty is designed for educational environments. The application does not log, save, or store screenshots. Screen buffers are safely dropped from memory via explicit Rust scoping the millisecond the API request finishes.
+
+📝 License
+This project is open-source and available under the MIT License.
