@@ -2,12 +2,11 @@
 
 use xcap::Monitor;
 use base64::{engine::general_purpose, Engine as _};
-use tauri::{Manager, tray::{TrayIconBuilder, TrayIconEvent, MouseButton, MouseButtonState}};
+use tauri::{Manager, menu::{Menu, MenuItem}, tray::{TrayIconBuilder, TrayIconEvent, MouseButton, MouseButtonState}};
 
 // Put your real Gemini API token here!
 const API_TOKEN: &str = "YOUR_GEMINI_KEY_HERE"; 
 
-// THE AMAZING FIX: We are now strictly targeting the 2026 Google Gemini 2.5 models that your key revealed!
 const GOOGLE_ENDPOINTS: &[&str] = &[
     "v1beta/models/gemini-2.5-flash",
     "v1/models/gemini-2.5-flash",
@@ -61,7 +60,6 @@ async fn ask_the_ai_brain(image_bytes: Vec<u8>) -> Result<String, String> {
         let raw_text = res.text().await.unwrap_or_default();
 
         if status == 200 {
-            // GEMINI 2.5 ACCEPTED THE IMAGE! PARSE IT!
             let json_response: serde_json::Value = serde_json::from_str(&raw_text).unwrap_or_default();
             
             let ai_text_reply = json_response.get("candidates")
@@ -184,10 +182,19 @@ fn main() {
     tauri::Builder::default()
         .plugin(tauri_plugin_shell::init())
         .setup(|app| {
+            let quit_i = MenuItem::with_id(app, "quit", "Quit Spotty", true, None::<&str>)?;
+            let menu = Menu::with_items(app, &[&quit_i])?;
+
             let icon = app.default_window_icon().cloned().unwrap();
             let _tray = TrayIconBuilder::new()
                 .icon(icon)
                 .tooltip("Spotty - AI Sniffer")
+                .menu(&menu)
+                .on_menu_event(|app, event| {
+                    if event.id.as_ref() == "quit" {
+                        app.exit(0);
+                    }
+                })
                 .on_tray_icon_event(|tray, event| {
                     if let TrayIconEvent::Click { button: MouseButton::Left, button_state: MouseButtonState::Up, .. } = event {
                         if let Some(window) = tray.app_handle().get_webview_window("main") {
